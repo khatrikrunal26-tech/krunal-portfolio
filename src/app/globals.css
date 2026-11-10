@@ -1,0 +1,197 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-primary: #04070B;
+  --bg-secondary: #08121E;
+  --accent-cyan: #38BDF8;
+  --accent-cyan-dim: rgba(56, 189, 248, 0.16);
+  --glass-bg: rgba(15, 23, 42, 0.45);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-border-hover: rgba(56, 189, 248, 0.25);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  background-color: var(--bg-primary);
+}
+
+body {
+  background-color: #04070B;
+  color: white;
+  font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* ── Scrollbar ─────────────────────────── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: #04070B; }
+::-webkit-scrollbar-thumb { background: rgba(56, 189, 248, 0.3); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(56, 189, 248, 0.6); }
+
+/* ── Glass card ─────────────────────────── */
+@layer components {
+  .glass-card {
+    background: rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+  }
+  .glass-card-hover {
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  .glass-card-hover:hover {
+    border-color: rgba(56, 189, 248, 0.25);
+    box-shadow: 0 0 40px rgba(56, 189, 248, 0.08), inset 0 1px 0 rgba(56, 189, 248, 0.1);
+  }
+
+  /* ── Pill badge ─────────────────────── */
+  .pill-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 9999px;
+    padding: 6px 14px;
+    font-size: 0.75rem;
+    color: rgb(203, 213, 225);
+    white-space: nowrap;
+  }
+  .pill-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #38BDF8;
+    box-shadow: 0 0 8px #38BDF8;
+    flex-shrink: 0;
+  }
+  .pill-dot-green {
+    background: #22C55E;
+    box-shadow: 0 0 8px #22C55E;
+  }
+
+  /* ── Architectural grid hairlines ───── */
+  .arch-grid {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .arch-line-h {
+    position: absolute;
+    left: 0; right: 0;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.06);
+  }
+  .arch-line-v {
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 1px;
+    background: rgba(255, 255, 255, 0.06);
+  }
+  .arch-crosshair {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    transform: translate(-50%, -50%);
+  }
+  .arch-crosshair::before,
+  .arch-crosshair::after {
+    content: '';
+    position: absolute;
+    background: rgba(255, 255, 255, 0.2);
+  }
+  .arch-crosshair::before {
+    left: 50%; top: 0; bottom: 0; width: 1px;
+  }
+  .arch-crosshair::after {
+    top: 50%; left: 0; right: 0; height: 1px;
+  }
+
+  /* ── CTA button ─────────────────────── */
+  .cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(56, 189, 248, 0.12);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    color: #38BDF8;
+    padding: 10px 20px;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.25s ease;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .cta-btn:hover {
+    background: rgba(56, 189, 248, 0.2);
+    border-color: rgba(56, 189, 248, 0.6);
+    box-shadow: 0 0 20px rgba(56, 189, 248, 0.2);
+  }
+
+  /* ── Section heading ───────────────── */
+  .section-label {
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #38BDF8;
+  }
+}
+
+/* ── Radial glow ─────────────────────── */
+.radial-glow {
+  background: radial-gradient(circle at 50% 30%, rgba(56, 189, 248, 0.16), transparent 65%);
+}
+.radial-glow-purple {
+  background: radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.14), transparent 65%);
+}
+
+/* ── Dashed orbit ───────────────────── */
+.dashed-circle {
+  border: 1.5px dashed rgba(255, 255, 255, 0.12);
+  border-radius: 50%;
+}
+
+/* ── Video waveform bars ────────────── */
+@keyframes wave {
+  0%, 100% { height: 4px; }
+  50% { height: 100%; }
+}
+.waveform-bar {
+  background: #38BDF8;
+  border-radius: 2px;
+  animation: wave 1.2s ease-in-out infinite;
+}
+
+/* ── Circular progress SVG ──────────── */
+.progress-ring-track { stroke: rgba(255,255,255,0.08); }
+.progress-ring-fill {
+  stroke: #38BDF8;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 1.5s ease;
+}
+
+/* ── Toast ──────────────────────────── */
+@keyframes slideUp {
+  from { transform: translateY(16px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+.toast-enter { animation: slideUp 0.3s ease forwards; }
+
+/* ── Selection ──────────────────────── */
+::selection {
+  background: rgba(56, 189, 248, 0.25);
+  color: white;
+}
+
