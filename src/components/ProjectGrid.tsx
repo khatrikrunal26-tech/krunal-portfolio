@@ -98,8 +98,8 @@ function ProjectCard({ project, onClick, index }: ProjectCardProps) {
       onMouseLeave={handleMouseLeave}
       onClick={onClick}
     >
-      {/* Standardized 16:10 Aspect Ratio container — guarantees zero layout gaps */}
-      <div className="relative w-full overflow-hidden bg-[#050C16]" style={{ paddingBottom: '60%' }}>
+      {/* Standardized 16:9 Aspect Ratio container — guarantees zero layout gaps */}
+      <div className="relative w-full overflow-hidden bg-[#050C16] aspect-video">
         {imgError ? (
           /* Sleek Dark-Mode Glassmorphic Motion Graphic Cover Fallback */
           <div className="absolute inset-0 bg-gradient-to-br from-[#0B1524] via-[#04070B] to-[#0A1A2F] flex flex-col items-center justify-center p-4 select-none overflow-hidden">
@@ -131,6 +131,10 @@ function ProjectCard({ project, onClick, index }: ProjectCardProps) {
           <img
             src={effectiveThumb}
             alt={project.title}
+            loading="lazy"
+            decoding="async"
+            width={640}
+            height={360}
             onError={handleImgError}
             className={`absolute inset-0 w-full h-full object-cover transition-all duration-500 ${
               hovered && !isEmbed && videoSrc ? 'scale-105 opacity-0' : 'scale-100 opacity-100 group-hover:scale-105'
@@ -234,9 +238,9 @@ function ProjectCard({ project, onClick, index }: ProjectCardProps) {
 
         {project.tags && project.tags.length > 0 && (
           <div className="flex flex-wrap gap-1.5 mt-3 pt-3 border-t border-white/[0.06]">
-            {project.tags.map((tag) => (
+            {project.tags.map((tag, tagIdx) => (
               <span
-                key={tag}
+                key={`${project.id || 'proj'}-${tag}-${tagIdx}`}
                 className="font-mono text-[9px] px-2 py-0.5 rounded-full border border-white/[0.08] bg-white/[0.03] text-slate-400"
               >
                 {tag}
@@ -315,7 +319,7 @@ export default function ProjectGrid() {
           <AnimatePresence>
             {filtered.map((project, i) => (
               <ProjectCard
-                key={project.id}
+                key={project.id || `proj-${i}`}
                 project={project}
                 index={i}
                 onClick={() => setSelectedProject(project)}

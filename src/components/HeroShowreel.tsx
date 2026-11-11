@@ -116,8 +116,62 @@ function DotMatrix({ className = '' }: { className?: string }) {
 
 // ── 3D Isometric Glowing Cube Centerpiece ──────────────────────
 function GlowingCubeCenterpiece() {
+  const [isVisible, setIsVisible] = useState(true);
+  const cubeRef = useRef<HTMLDivElement>(null);
+  const animRef = useRef<HTMLDivElement>(null);
+  const frameRef = useRef<number | null>(null);
+
+  // Wrap animation loop with IntersectionObserver to prevent mobile CPU throttling
+  useEffect(() => {
+    const el = cubeRef.current;
+    if (!el || typeof IntersectionObserver === 'undefined') return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisible(entry.isIntersecting);
+      },
+      { threshold: 0.05 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  // requestAnimationFrame loop pauses when scrolled out of view
+  useEffect(() => {
+    if (!isVisible) {
+      if (frameRef.current) {
+        cancelAnimationFrame(frameRef.current);
+        frameRef.current = null;
+      }
+      return;
+    }
+
+    let startTime: number | null = null;
+    const loop = (timestamp: number) => {
+      if (!startTime) startTime = timestamp;
+      const elapsed = (timestamp - startTime) / 1000;
+      // Precise 7s floating oscillation and subtle 1.2deg tilt
+      const yOffset = Math.sin((elapsed / 7) * Math.PI * 2) * -8;
+      const rotZ = Math.sin((elapsed / 7) * Math.PI * 2) * 1.2;
+
+      if (animRef.current) {
+        animRef.current.style.transform = `translate3d(0, ${yOffset}px, 0) rotate(${rotZ}deg)`;
+      }
+      frameRef.current = requestAnimationFrame(loop);
+    };
+
+    frameRef.current = requestAnimationFrame(loop);
+
+    return () => {
+      if (frameRef.current) {
+        cancelAnimationFrame(frameRef.current);
+        frameRef.current = null;
+      }
+    };
+  }, [isVisible]);
+
   return (
-    <div className="relative flex items-center justify-center my-4 select-none pointer-events-none">
+    <div ref={cubeRef} className="relative flex items-center justify-center my-4 select-none pointer-events-none">
       {/* Atmospheric Radial Light Rays (Purple / Cyan / Amber) */}
       <div
         className="absolute w-80 h-80 rounded-full opacity-70 blur-3xl"
@@ -133,13 +187,10 @@ function GlowingCubeCenterpiece() {
         <div className="h-14 w-[1px] bg-gradient-to-b from-transparent via-sky-400 to-transparent" />
       </div>
 
-      {/* 3D Isometric Glowing Cube */}
-      <motion.div
-        animate={{
-          y: [0, -8, 0],
-          rotateZ: [0, 1.2, -1.2, 0],
-        }}
-        transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
+      {/* 3D Isometric Glowing Cube with RAF hardware transform */}
+      <div
+        ref={animRef}
+        style={{ willChange: 'transform' }}
         className="relative w-36 h-36 sm:w-44 sm:h-44 md:w-48 md:h-48 flex items-center justify-center"
       >
         <svg
@@ -291,7 +342,7 @@ function GlowingCubeCenterpiece() {
 
         {/* Ambient Ring */}
         <div className="absolute inset-2 rounded-full border border-sky-400/25 animate-ping opacity-25 pointer-events-none" />
-      </motion.div>
+      </div>
 
       {/* Right Halftone & Bracket Accent */}
       <div className="hidden sm:flex items-center gap-3 ml-6 opacity-40">
@@ -311,13 +362,33 @@ export default function HeroShowreel() {
   const y = useTransform(scrollYProgress, [0, 1], [0, 60]);
 
   useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.play().catch(() => {});
-    }
-
     const handleOpenShowreel = () => setModalOpen(true);
     window.addEventListener('open-showreel', handleOpenShowreel);
-    return () => window.removeEventListener('open-showreel', handleOpenShowreel);
+
+    const el = containerRef.current;
+    if (!el || typeof IntersectionObserver === 'undefined') {
+      videoRef.current?.play().catch(() => {});
+      return () => window.removeEventListener('open-showreel', handleOpenShowreel);
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (videoRef.current) {
+          if (entry.isIntersecting) {
+            videoRef.current.play().catch(() => {});
+          } else {
+            videoRef.current.pause();
+          }
+        }
+      },
+      { threshold: 0.05 }
+    );
+    observer.observe(el);
+
+    return () => {
+      window.removeEventListener('open-showreel', handleOpenShowreel);
+      observer.disconnect();
+    };
   }, []);
 
   return (
@@ -466,7 +537,7 @@ export default function HeroShowreel() {
                 muted
                 loop
                 playsInline
-                poster="https://images.unsplash.com/photo-1536240478700-b869ad10e128?w=1200&q=80"
+                poster="/thumbnails/showreel-poster.jpg"
               />
 
               {/* Dark cinematic vignette overlay */}

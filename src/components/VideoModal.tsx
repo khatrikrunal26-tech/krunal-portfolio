@@ -28,10 +28,6 @@ interface VideoModalProps {
 
 // Map known Google Drive IDs to potential local downloaded .mp4 files
 const DRIVE_LOCAL_MAP: Record<string, string> = {
-  '1lxMMedosRBBANjlHM9rIB6GG7WIdRLU7': '/videos/deepseek-harness.mp4',
-  '1nLA159A9ItiBv_XBXA2UEcXoKhphBH18': '/videos/grok-motion.mp4',
-  '1Zz-9vRs_HjeBL3pUkzc8XxVNH91zsCn5': '/videos/google-drive-motion.mp4',
-  '1k14EV-zqKHMFKbjwCQbGfYpPLnhGY7PN': '/videos/talking-head-2.mp4',
   '13WRr6o9t4AgLFk8WvtWoIj7YuFfjMJhU': '/videos/talking-head-creator.mp4',
   '1nM_Vw5mIbcjNoAwZRqkxkucWBGtgoLnJ': '/videos/showreel.mp4',
 };
@@ -178,7 +174,7 @@ export default function VideoModal({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
-          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/85 backdrop-blur-md overflow-y-auto"
+          className="fixed inset-0 z-50 flex flex-col items-center justify-start sm:justify-center p-3 sm:p-6 bg-black/90 backdrop-blur-md overflow-y-auto"
           onClick={onClose}
         >
           {/* Modal Content Wrapper — Responsive viewport sizing */}
@@ -190,7 +186,7 @@ export default function VideoModal({
             className={`relative w-full mx-auto my-auto flex flex-col flex-shrink-0 ${
               isVertical
                 ? 'max-w-[320px] xs:max-w-[340px] sm:max-w-[380px]'
-                : 'max-w-[95vw] sm:max-w-3xl md:max-w-4xl'
+                : 'max-w-full sm:max-w-3xl md:max-w-4xl'
             }`}
             onClick={(e) => e.stopPropagation()}
           >
@@ -237,12 +233,12 @@ export default function VideoModal({
             {/* Video Container Frame — Standardized 16:9 / 9:16 Non-Collapsing Scaling */}
             {isVertical ? (
               /* Vertical (9:16) Container for Talking Head & Reels */
-              <div className="relative w-full max-w-[320px] xs:max-w-[340px] sm:max-w-[380px] h-[70vh] max-h-[640px] mx-auto bg-black rounded-2xl overflow-hidden border border-white/10 shadow-2xl flex flex-col items-center justify-center">
+              <div className="relative w-full max-w-[320px] xs:max-w-[340px] sm:max-w-[380px] aspect-[9/16] max-h-[72vh] mx-auto bg-black rounded-2xl overflow-hidden border border-white/10 shadow-2xl flex items-center justify-center">
                 {isGoogleDrive && driveId ? (
                   <iframe
                     id="video-modal-iframe-vertical"
                     src={getGoogleDriveEmbedUrl(driveId)}
-                    className="w-full h-full border-0"
+                    className="absolute inset-0 w-full h-full border-0"
                     allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
                     allowFullScreen
                     title={title}
@@ -251,7 +247,7 @@ export default function VideoModal({
                   <iframe
                     id="video-modal-iframe-vertical"
                     src={getYouTubeEmbedUrl(ytId, true)}
-                    className="w-full h-full border-0"
+                    className="absolute inset-0 w-full h-full border-0"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                     allowFullScreen
                     title={title}
@@ -260,7 +256,7 @@ export default function VideoModal({
                   <iframe
                     id="video-modal-iframe-vertical"
                     src={resolvedInstaEmbed}
-                    className="w-full h-full border-0"
+                    className="absolute inset-0 w-full h-full border-0"
                     allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
                     allowFullScreen
                     title={title}
@@ -271,7 +267,7 @@ export default function VideoModal({
                     id="video-modal-iframe-vertical"
                     ref={videoRef}
                     src={activeVideoSrc}
-                    className="w-full h-full object-contain border-0 bg-black"
+                    className="absolute inset-0 w-full h-full object-contain border-0 bg-black"
                     controls
                     playsInline
                     autoPlay
@@ -287,12 +283,12 @@ export default function VideoModal({
               </div>
             ) : (
               /* Widescreen (16:9) Container for Motion Graphics & YouTube */
-              <div className="relative w-full max-w-[95vw] sm:max-w-3xl md:max-w-4xl mx-auto h-[260px] xs:h-[300px] sm:h-[400px] md:h-[480px] bg-black rounded-xl overflow-hidden border border-white/10 shadow-2xl flex items-center justify-center">
+              <div className="relative w-full aspect-video max-h-[72vh] mx-auto bg-black rounded-xl overflow-hidden border border-white/10 shadow-2xl flex items-center justify-center">
                 {isGoogleDrive && driveId ? (
                   <iframe
                     id="video-modal-iframe"
                     src={getGoogleDriveEmbedUrl(driveId)}
-                    className="w-full h-full border-0 absolute inset-0"
+                    className="absolute inset-0 w-full h-full border-0"
                     allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
                     allowFullScreen
                     loading="eager"
@@ -302,7 +298,7 @@ export default function VideoModal({
                   <iframe
                     id="video-modal-iframe"
                     src={getYouTubeEmbedUrl(ytId, true)}
-                    className="w-full h-full border-0 absolute inset-0"
+                    className="absolute inset-0 w-full h-full border-0"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                     allowFullScreen
                     title={title}
@@ -311,7 +307,7 @@ export default function VideoModal({
                   <iframe
                     id="video-modal-iframe"
                     src={resolvedInstaEmbed}
-                    className="w-full h-full border-0 absolute inset-0"
+                    className="absolute inset-0 w-full h-full border-0"
                     allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
                     allowFullScreen
                     title={title}
@@ -322,7 +318,7 @@ export default function VideoModal({
                     id="video-modal-iframe"
                     ref={videoRef}
                     src={activeVideoSrc}
-                    className="w-full h-full object-contain border-0 bg-black"
+                    className="absolute inset-0 w-full h-full object-contain border-0 bg-black"
                     controls
                     playsInline
                     autoPlay
@@ -367,8 +363,8 @@ export default function VideoModal({
 
                 {tags && tags.length > 0 && (
                   <div className="flex flex-wrap gap-1.5 mt-2">
-                    {tags.map((tag) => (
-                      <span key={tag} className="pill-badge !text-[9px] !py-0.5 !px-2">
+                    {tags.map((tag, idx) => (
+                      <span key={`modal-tag-${tag}-${idx}`} className="pill-badge !text-[9px] !py-0.5 !px-2">
                         {tag}
                       </span>
                     ))}

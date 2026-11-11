@@ -6,6 +6,11 @@ export const metadata: Metadata = {
   description:
     'Portfolio of Krunal Khatri — Specialist in high-retention video editing, After Motion graphics, and Gold Motion grading for modern brands & creators.',
   keywords: ['video editor', 'After Motion', 'Gold Motion', 'motion graphics', 'reels', 'YouTube', 'Mumbai'],
+  icons: {
+    icon: '/icon.svg',
+    shortcut: '/favicon.ico',
+    apple: '/icon.svg',
+  },
   openGraph: {
     title: 'Krunal Khatri — Video Editor',
     description: 'Visual Storytelling for Modern Brands & Creators',
